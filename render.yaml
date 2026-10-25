@@ -1,0 +1,27 @@
+databases:
+  - name: zhuo-db
+    plan: free
+    databaseName: zhuo
+    user: zhuo
+
+services:
+  - type: web
+    name: zhuo-fan-ht
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        fromDatabase:
+          name: zhuo-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PSEUDO
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

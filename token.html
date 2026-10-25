@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Token admin</title>
+<style>body{background:#07070a;color:#fff;font:16px system-ui,sans-serif;max-width:420px;margin:0 auto;padding:24px}
+input,button,textarea{width:100%;box-sizing:border-box;padding:13px;margin:6px 0;border-radius:10px;border:1px solid #333;background:#16161b;color:#fff;font:inherit}
+button{background:linear-gradient(#ff2d3d,#b50f1e);border:0;font-weight:700}textarea{height:120px;font-size:12px;word-break:break-all}#m{color:#ff8a93}</style></head><body>
+<h2>🔑 Token admin</h2><p style="color:#9a9aa5">Connecte-toi avec le compte admin, copie le token, colle-le dans le panel admin de l’app.</p>
+<input id="p" placeholder="Pseudo admin" autocomplete="username"><input id="w" type="password" placeholder="Mot de passe" autocomplete="current-password">
+<button id="go">Générer le token</button><p id="m"></p><textarea id="t" readonly style="display:none"></textarea><button id="cp" style="display:none">Copier</button>
+<script>
+const $=i=>document.getElementById(i);
+$('go').onclick=async()=>{$('m').textContent='';try{
+ const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pseudo:$('p').value,password:$('w').value})});
+ const d=await r.json();if(!r.ok)throw Error(d.error||'Erreur');
+ if(d.user.role!=='admin')throw Error('Ce compte n’est pas admin');
+ $('t').value=d.token;$('t').style.display=$('cp').style.display='block';$('w').value=''}catch(e){$('m').textContent=e.message}};
+$('cp').onclick=()=>{$('t').select();navigator.clipboard?.writeText($('t').value);$('cp').textContent='Copié ✔'};
+</script></body></html>
